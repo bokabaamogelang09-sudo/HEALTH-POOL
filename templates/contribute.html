@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Make Contribution - Community Health Pool{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-white fw-bold">
+            <i class="fas fa-hand-holding-usd"></i> Make Contribution
+        </h1>
+        <p class="text-white-50">Contribute to the community health pool</p>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title fw-bold mb-4">
+                    <i class="fas fa-plus-circle text-success"></i> Contribution Details
+                </h5>
+                
+                {% if member %}
+                <div class="alert alert-info">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-user-circle fa-2x me-3"></i>
+                        <div>
+                            <h6 class="mb-1">{{ member.name }}</h6>
+                            <p class="mb-0">Member ID: {{ member.id_number }} | Plan: {{ member.plan }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('contribute') }}">
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Contribution Amount (R)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">R</span>
+                            <input type="number" class="form-control" id="amount" name="amount" 
+                                   min="1" step="0.01" placeholder="Enter amount" required>
+                        </div>
+                        <div class="form-text">
+                            Minimum contribution: R1.00
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Quick Amounts</label>
+                        <div class="d-grid gap-2 d-md-flex">
+                            <button type="button" class="btn btn-outline-primary btn-sm quick-amount" data-amount="50">R50</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm quick-amount" data-amount="100">R100</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm quick-amount" data-amount="200">R200</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm quick-amount" data-amount="500">R500</button>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Note:</strong> You will receive an SMS confirmation after your contribution is processed.
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-paper-plane"></i> Process Contribution
+                        </button>
+                        <a href="{{ url_for('member_dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Quick amount buttons
+    document.querySelectorAll('.quick-amount').forEach(button => {
+        button.addEventListener('click', function() {
+            const amount = this.getAttribute('data-amount');
+            document.getElementById('amount').value = amount;
+        });
+    });
+});
+</script>
+{% endblock %}

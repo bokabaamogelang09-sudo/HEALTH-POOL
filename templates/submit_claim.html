@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Submit Claim - Community Health Pool{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-white fw-bold">
+            <i class="fas fa-file-medical"></i> Submit Claim
+        </h1>
+        <p class="text-white-50">Submit a new health claim for review</p>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title fw-bold mb-4">
+                    <i class="fas fa-plus-circle text-warning"></i> Claim Information
+                </h5>
+                
+                {% if member %}
+                <div class="alert alert-info mb-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-user-circle fa-2x me-3"></i>
+                        <div>
+                            <h6 class="mb-1">{{ member.name }}</h6>
+                            <p class="mb-0">Member ID: {{ member.id_number }} | Plan: {{ member.plan }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('submit_claim') }}">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="type" class="form-label">Claim Type</label>
+                            <select class="form-select" id="type" name="type" required>
+                                <option value="">Select claim type...</option>
+                                <option value="Hospitalization">Hospitalization</option>
+                                <option value="Surgery">Surgery</option>
+                                <option value="Medication">Medication</option>
+                                <option value="Consultation">Doctor Consultation</option>
+                                <option value="Diagnostic">Diagnostic Tests</option>
+                                <option value="Dental">Dental Treatment</option>
+                                <option value="Optical">Optical Care</option>
+                                <option value="Maternity">Maternity Care</option>
+                                <option value="Emergency">Emergency Care</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="amount" class="form-label">Claim Amount (R)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R</span>
+                                <input type="number" class="form-control" id="amount" name="amount" 
+                                       min="1" step="0.01" placeholder="Enter amount" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="hospital" class="form-label">Hospital/Clinic Name</label>
+                        <input type="text" class="form-control" id="hospital" name="hospital" 
+                               placeholder="Enter hospital or clinic name" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description of Treatment</label>
+                        <textarea class="form-control" id="description" name="description" 
+                                  rows="4" placeholder="Describe the treatment, symptoms, and medical services received..." required></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="priority" class="form-label">Priority Level</label>
+                            <select class="form-select" id="priority" name="priority">
+                                <option value="normal">Normal</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High (Urgent)</option>
+                            </select>
+                            <div class="form-text">
+                                Select "High" for emergency or time-sensitive claims.
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-info-circle text-info"></i> Priority Guidelines
+                                    </h6>
+                                    <small>
+                                        <strong>High:</strong> Emergency care, critical conditions<br>
+                                        <strong>Medium:</strong> Scheduled surgeries<br>
+                                        <strong>Normal:</strong> Routine consultations
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-sms"></i>
+                        <strong>SMS Notification:</strong> You will receive an SMS confirmation when your claim is submitted and when it's processed.
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-warning btn-lg">
+                            <i class="fas fa-paper-plane"></i> Submit Claim for Review
+                        </button>
+                        <a href="{{ url_for('member_dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

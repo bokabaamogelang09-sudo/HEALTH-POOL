@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Community Health Pool{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-white fw-bold">
+            <i class="fas fa-chart-line"></i> Admin Dashboard
+        </h1>
+        <p class="text-white-50">Overview of community health pool statistics</p>
+    </div>
+</div>
+
+{# APPROACH 2: Safe default values for each stat #}
+{% if stats is not defined %}
+    {% set stats = {} %}
+{% endif %}
+
+{# Set default values for each individual stat #}
+{% set current_balance = stats.current_balance | default(0) %}
+{% set total_contributions = stats.total_contributions | default(0) %}
+{% set total_payouts = stats.total_payouts | default(0) %}
+{% set member_count = stats.member_count | default(0) %}
+{% set pending_claims = stats.pending_claims | default(0) %}
+{% set monthly_expected = stats.monthly_expected | default(0) %}
+
+<div class="row">
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <h3 class="fw-bold text-primary mb-2">R{{ "%.2f"|format(current_balance) }}</h3>
+            <p class="text-muted mb-0">Current Balance</p>
+            <small class="text-success">
+                <i class="fas fa-arrow-up"></i> Available funds
+            </small>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-card">
+            <div class="stat-icon bg-success bg-opacity-10 text-success">
+                <i class="fas fa-hand-holding-usd"></i>
+            </div>
+            <h3 class="fw-bold text-success mb-2">R{{ "%.2f"|format(total_contributions) }}</h3>
+            <p class="text-muted mb-0">Total Contributions</p>
+            <small class="text-muted">
+                <i class="fas fa-chart-line"></i> All time
+            </small>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-card">
+            <div class="stat-icon bg-danger bg-opacity-10 text-danger">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <h3 class="fw-bold text-danger mb-2">R{{ "%.2f"|format(total_payouts) }}</h3>
+            <p class="text-muted mb-0">Total Payouts</p>
+            <small class="text-muted">
+                <i class="fas fa-history"></i> Disbursed
+            </small>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-card">
+            <div class="stat-icon bg-info bg-opacity-10 text-info">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3 class="fw-bold text-info mb-2">{{ member_count }}</h3>
+            <p class="text-muted mb-0">Active Members</p>
+            <small class="text-muted">
+                <i class="fas fa-user-check"></i> Registered
+            </small>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <div class="stat-card">
+            <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                <i class="fas fa-file-medical"></i>
+            </div>
+            <h3 class="fw-bold text-warning mb-2">{{ pending_claims }}</h3>
+            <p class="text-muted mb-0">Pending Claims</p>
+            <small class="text-warning">
+                <i class="fas fa-clock"></i> Requires review
+            </small>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h3 class="fw-bold text-primary mb-2">R{{ "%.2f"|format(monthly_expected) }}</h3>
+            <p class="text-muted mb-0">Monthly Expected</p>
+            <small class="text-muted">
+                <i class="fas fa-repeat"></i> Recurring
+            </small>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="stat-card">
+            <div class="stat-icon bg-success bg-opacity-10 text-success">
+                <i class="fas fa-chart-pie"></i>
+            </div>
+            {% set divisor = total_contributions if total_contributions > 0 else 1 %}
+            <h3 class="fw-bold text-success mb-2">
+                {{ "%.1f"|format((current_balance / divisor) * 100) }}%
+            </h3>
+            <p class="text-muted mb-0">Reserve Ratio</p>
+            <small class="text-muted">
+                <i class="fas fa-percentage"></i> Health indicator
+            </small>
+        </div>
+    </div>
+</div>
+
+<!-- Pending Claims Alert Section -->
+{% if pending_claims > 0 %}
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-warning alert-dismissible fade show">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                <div class="flex-grow-1">
+                    <h5 class="alert-heading mb-1">Action Required: {{ pending_claims }} Pending Claims</h5>
+                    <p class="mb-0">You have {{ pending_claims }} claim(s) waiting for review. Please process them promptly.</p>
+                </div>
+                <div>
+                    <a href="{{ url_for('admin_claims') }}" class="btn btn-warning">
+                        <i class="fas fa-file-medical"></i> Review Claims Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title fw-bold mb-4">
+                    <i class="fas fa-chart-bar text-primary"></i> Pool Activity
+                </h5>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>Contributions</span>
+                        <span class="fw-bold text-success">R{{ "%.2f"|format(total_contributions) }}</span>
+                    </div>
+                    {% set total_activity = total_contributions + total_payouts %}
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             style="width: {{ (total_contributions / total_activity * 100) if total_activity > 0 else 0 }}%">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>Payouts</span>
+                        <span class="fw-bold text-danger">R{{ "%.2f"|format(total_payouts) }}</span>
+                    </div>
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar bg-danger" role="progressbar" 
+                             style="width: {{ (total_payouts / total_activity * 100) if total_activity > 0 else 0 }}%">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Pending Claims -->
+        {% if pending_claims_list and pending_claims_list|length > 0 %}
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title fw-bold mb-4">
+                    <i class="fas fa-clock text-warning"></i> Recent Pending Claims
+                </h5>
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th>Member</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Priority</th>
+                                <th>Submitted</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for claim in pending_claims_list[:5] %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user-circle text-muted me-2"></i>
+                                        <div>
+                                            <div class="fw-bold">{{ claim.member_name }}</div>
+                                            <small class="text-muted">{{ claim.member_phone }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ claim.type }}</td>
+                                <td class="fw-bold">R{{ "%.2f"|format(claim.amount) }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'danger' if claim.priority == 'high' else 'warning' if claim.priority == 'medium' else 'info' }}">
+                                        {{ claim.priority }}
+                                    </span>
+                                </td>
+                                <td>{{ claim.created_at[:16] }}</td>
+                                <td>
+                                    <a href="{{ url_for('admin_claims') }}" class="btn btn-sm btn-outline-primary">
+                                        Review
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if pending_claims_list|length > 5 %}
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('admin_claims') }}" class="btn btn-sm btn-outline-warning">
+                        View All {{ pending_claims_list|length }} Pending Claims
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title fw-bold mb-4">
+                    <i class="fas fa-tasks text-warning"></i> Quick Actions
+                </h5>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('admin_claims') }}" class="btn btn-outline-warning text-start">
+                        <i class="fas fa-file-medical"></i> Review Claims
+                        {% if pending_claims > 0 %}
+                        <span class="badge bg-danger ms-2">{{ pending_claims }}</span>
+                        {% endif %}
+                    </a>
+                    <a href="#" class="btn btn-outline-primary text-start">
+                        <i class="fas fa-users"></i> Manage Members
+                    </a>
+                    <a href="#" class="btn btn-outline-info text-start">
+                        <i class="fas fa-sms"></i> Send Bulk SMS
+                    </a>
+                    <a href="#" class="btn btn-outline-success text-start">
+                        <i class="fas fa-file-download"></i> Export Report
+                    </a>
+                    <a href="#" class="btn btn-outline-secondary text-start">
+                        <i class="fas fa-cog"></i> System Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SMS Status Card -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title fw-bold mb-4">
+                    <i class="fas fa-sms text-info"></i> SMS Service Status
+                </h5>
+                <div class="row text-center">
+                    <div class="col-6 mb-3">
+                        <div class="p-3 border rounded">
+                            <i class="fas fa-paper-plane fa-2x text-success mb-2"></i>
+                            <h6 class="mb-1">Outgoing SMS</h6>
+                            <small class="text-success">Active</small>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="p-3 border rounded">
+                            <i class="fas fa-mobile-alt fa-2x text-success mb-2"></i>
+                            <h6 class="mb-1">South Africa</h6>
+                            <small class="text-success">+27 Supported</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle"></i>
+                        SMS notifications are automatically sent for:
+                    </small>
+                    <ul class="small text-muted mt-2">
+                        <li>Claim submissions</li>
+                        <li>Claim approvals/declines</li>
+                        <li>Contribution confirmations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title fw-bold mb-4">
+                    <i class="fas fa-info-circle text-info"></i> System Status
+                </h5>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-database fa-2x text-success me-3"></i>
+                            <div>
+                                <h6 class="mb-0">Database</h6>
+                                <small class="text-success">Connected</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-sms fa-2x text-success me-3"></i>
+                            <div>
+                                <h6 class="mb-0">SMS Service</h6>
+                                <small class="text-success">Active</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-flag fa-2x text-success me-3"></i>
+                            <div>
+                                <h6 class="mb-0">Region</h6>
+                                <small class="text-success">South Africa</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-money-bill-wave fa-2x text-success me-3"></i>
+                            <div>
+                                <h6 class="mb-0">Currency</h6>
+                                <small class="text-success">ZAR (R)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Community Health Pool{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="card">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                    <h1 class="h3 text-gray-900 mb-4">Create Account</h1>
+                    <p class="text-muted">Join the community health pool</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('register') }}" class="user">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   placeholder="Choose a username" required autofocus>
+                        </div>
+                        <div class="form-text">This will be your login username</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                   placeholder="07XXXXXXXX or 01XXXXXXXX" required>
+                        </div>
+                        <div class="form-text">Enter your South African mobile number for SMS notifications</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Create a password" required>
+                        </div>       <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   placeholder="your@email.com" required>
+                        </div>
+                        <div class="form-text">We'll send important notifications to this email</div>
+                    </div>
+                        <div class="form-text">Choose a strong password</div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-sms"></i>
+                        <strong>SMS Notifications:</strong> We'll send important updates about your claims and contributions via SMS.
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-plus"></i> Create Account
+                        </button>
+                    </div>
+                </form>
+
+                <hr class="my-4">
+
+                <div class="text-center">
+                    <p class="mb-0">Already have an account?</p>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-sm mt-2">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

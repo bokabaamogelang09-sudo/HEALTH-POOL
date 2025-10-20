@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Update Phone Number - Community Health Pool{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-white fw-bold">
+            <i class="fas fa-phone"></i> Update Phone Number
+        </h1>
+        <p class="text-white-50">Update your mobile number for SMS notifications</p>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title fw-bold mb-4">
+                    <i class="fas fa-mobile-alt text-primary"></i> Phone Number
+                </h5>
+                
+                {% if member %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Current Phone Number:</strong> {{ member.phone }}
+                </div>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('update_phone') }}">
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">New Phone Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                   placeholder="07XXXXXXXX or 01XXXXXXXX" required>
+                        </div>
+                        <div class="form-text">
+                            Enter your South African mobile number. We'll send SMS notifications for claims and contributions.
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Important:</strong> SMS notifications will be sent to this number for:
+                        <ul class="mb-0 mt-2">
+                            <li>Claim submission confirmations</li>
+                            <li>Claim approval/decline notifications</li>
+                            <li>Contribution confirmations</li>
+                            <li>Important pool updates</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save"></i> Update Phone Number
+                        </button>
+                        <a href="{{ url_for('member_dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

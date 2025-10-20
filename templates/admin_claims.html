@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Claims</title>
+    <style>
+        .claim-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .status-pending { color: orange; font-weight: bold; }
+        .status-approved { color: green; font-weight: bold; }
+        .status-declined { color: red; font-weight: bold; }
+        .action-form { display: inline-block; margin-right: 10px; }
+        .form-input { padding: 5px; margin: 5px; }
+        .btn { padding: 8px 15px; border: none; border-radius: 3px; cursor: pointer; }
+        .btn-success { background: green; color: white; }
+        .btn-danger { background: red; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Claims Management</h1>
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    {% for claim in claims %}
+    <div class="claim-card">
+        <h3>Claim #{{ claim.id }} - {{ claim.member_name }}</h3>
+        <p><strong>Amount:</strong> R{{ "%.2f"|format(claim.amount) }}</p>
+        <p><strong>Description:</strong> {{ claim.description }}</p>
+        <p><strong>Type:</strong> {{ claim.type }}</p>
+        <p><strong>Hospital:</strong> {{ claim.hospital or 'N/A' }}</p>
+        <p><strong>Priority:</strong> {{ claim.priority }}</p>
+        <p><strong>Status:</strong> <span class="status-{{ claim.status }}">{{ claim.status }}</span></p>
+        <p><strong>Submitted:</strong> {{ claim.created_at }}</p>
+        
+        {% if claim.status == 'pending' %}
+        <div class="claim-actions">
+            <form action="{{ url_for('approve_claim', claim_id=claim.id) }}" method="post" class="action-form">
+                <input type="text" name="admin_notes" placeholder="Optional approval notes" class="form-input">
+                <button type="submit" class="btn btn-success">Approve Claim</button>
+            </form>
+            
+            <form action="{{ url_for('decline_claim', claim_id=claim.id) }}" method="post" class="action-form">
+                <input type="text" name="admin_notes" placeholder="Reason for decline (required)" class="form-input" required>
+                <button type="submit" class="btn btn-danger">Decline Claim</button>
+            </form>
+        </div>
+        {% else %}
+            <p><strong>Reviewed by:</strong> {{ claim.reviewer_name or 'N/A' }}</p>
+            <p><strong>Admin Notes:</strong> {{ claim.admin_notes or 'N/A' }}</p>
+        {% endif %}
+    </div>
+    {% else %}
+        <p>No claims found.</p>
+    {% endfor %}
+</body>
+</html>

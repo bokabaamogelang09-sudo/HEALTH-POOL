@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Community Health Pool{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary mx-auto">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h2 class="fw-bold">Welcome Back</h2>
+                    <p class="text-muted">Sign in to your account</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('login') }}">
+                    <div class="mb-4">
+                        <label for="username" class="form-label fw-semibold">
+                            <i class="fas fa-user"></i> Username
+                        </label>
+                        <input type="text" class="form-control" id="username" name="username" required autofocus>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-semibold">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-3">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="text-muted">
+                        Don't have an account? 
+                        <a href="{{ url_for('register') }}" class="text-primary fw-semibold text-decoration-none">
+                            Register here
+                        </a>
+                    </p>
+                </div>
+
+                <div class="mt-4 p-3 bg-light rounded">
+                    <p class="mb-2 fw-semibold"><i class="fas fa-info-circle text-info"></i> Demo Credentials:</p>
+                    <small class="text-muted">
+                        Admin: <code>admin / admin123</code><br>
+                        Create your own member account via registration
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
